@@ -40,6 +40,7 @@
                                     <div class="card-title">Top Sales Products</div>
                                 </div>
                                 <div class="card-body pb-0">
+                                    @isset($topproduct)
                                 @foreach($topproduct as $tp)
                                     <div class="d-flex">
                                         <div class="flex-1 pt-1 ml-2">
@@ -51,114 +52,14 @@
                                     </div>
                                     <div class="separator-dashed"></div>
                                 @endforeach
+                                @endisset
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 @include('layouts.footer')
-                <script>
-                    var ctx = document.getElementById('statisticsChart').getContext('2d');
-
-                    <?php
-                        $mos=[];
-                        $income=[];
-                    ?>
-                    @foreach($month as $mo)
-                        @foreach($mo as $m)
-                            <?php
-                            $mos[] = $m;
-                            ?>
-                        @endforeach
-                    @endforeach
-                    @foreach($incomepermonth as $pm)
-                        @foreach($pm as $p)
-                            <?php
-                            $income[] = $p;
-                            ?>
-                        @endforeach
-                    @endforeach
-                    var month = @json($mos);
-                    var incomemonth = @json($income);
-                </script>
-                <script>
-
-                    var statisticsChart = new Chart(ctx, {
-                        type: 'line',
-                        data: {
-                            labels: month,
-                            datasets: [ {
-                                label: "Profit",
-                                borderColor: '#1269db',
-                                pointRadius: 0,
-                                backgroundColor: '#006EFF8E',
-                                legendColor: '#1269db',
-                                fill: true,
-                                borderWidth: 2,
-                                data: incomemonth
-                            }]
-                        },
-                        options : {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            legend: {
-                                display: false
-                            },
-                            tooltips: {
-                                bodySpacing: 4,
-                                mode:"nearest",
-                                intersect: 0,
-                                position:"nearest",
-                                xPadding:10,
-                                yPadding:10,
-                                caretPadding:10,
-                                callbacks: {
-                                    label: (item) => `Rp. ${item.yLabel} ,-`,
-                                },
-                            },
-                            layout:{
-                                padding:{left:5,right:5,top:15,bottom:15}
-                            },
-                            scales: {
-                                yAxes: [{
-                                    ticks: {
-                                        fontStyle: "500",
-                                        beginAtZero: false,
-                                        maxTicksLimit: 10,
-                                        padding: 10,
-                                        min: 0
-                                    },
-                                    gridLines: {
-                                        drawTicks: false,
-                                        display: false
-                                    }
-                                }],
-                                xAxes: [{
-                                    gridLines: {
-                                        zeroLineColor: "transparent"
-                                    },
-                                    ticks: {
-                                        padding: 10,
-                                        fontStyle: "500"
-                                    }
-                                }]
-                            },
-                            legendCallback: function(chart) {
-                                var text = [];
-                                text.push('<ul class="' + chart.id + '-legend html-legend">');
-                                for (var i = 0; i < chart.data.datasets.length; i++) {
-                                    text.push('<li><span style="background-color:' + chart.data.datasets[i].legendColor + '"></span>');
-                                    if (chart.data.datasets[i].label) {
-                                        text.push(chart.data.datasets[i].label);
-                                    }
-                                    text.push('</li>');
-                                }
-                                text.push('</ul>');
-                                return text.join('');
-                            }
-                        }
-                    });
-                </script>
+                
             </div>
         </div>
     </div>

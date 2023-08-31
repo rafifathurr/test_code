@@ -82,8 +82,8 @@
                                         <div class="col-md-3">
                                             <label class="col-md-12">Jumlah Stok <span style="color: red;">*</span></label>
                                             <div class="col-md-12">
-                                                <input type="text" name="price" id="price" class="form-control numeric"
-                                                    step="1" @if (isset($products)) value="{{ $products->price }}" @endisset autocomplete="off" required
+                                                <input type="number" name="stock" id="stock" class="form-control"
+                                                    step="1" @if (isset($products)) value="{{ $products->stock }}" @endisset autocomplete="off" required
                                                     {{ $disabled_ }} style="width:100%;">
                                             </div>
                                         </div>
@@ -188,7 +188,7 @@
                                         <div class="col-md-11">
                                             <label class="col-md-12">Fire Rating (Lab. DinasPMK) <span style="color: red;">*</span></label>
                                             <div class="col-md-12">
-                                                <input type="text" name="rating" id="rating " class="form-control"
+                                                <input type="number" name="rating" id="rating " class="form-control"
                                                     step="1" @if (isset($products)) value="{{ $products->rating }}" @endisset autocomplete="off" required
                                                     {{ $disabled_ }} style="width:100%;">
                                             </div>

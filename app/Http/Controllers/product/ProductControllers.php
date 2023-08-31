@@ -8,7 +8,6 @@ use App\Models\category\Category;
 use Illuminate\Support\Facades\Storage;
 
 use Illuminate\Http\Request;
-use Auth;
 use Session;
 
 class ProductControllers extends Controller
@@ -24,7 +23,7 @@ class ProductControllers extends Controller
     {
         return view('product.index', [
             "title" => "List Products",
-            "products" => Product::where('deleted_at',null)->get()
+            "products" => Product::with('category')->whereNull('deleted_at')->get()
         ]);
     }
 
@@ -41,16 +40,21 @@ class ProductControllers extends Controller
     // Store Function to Database
     public function store(Request $req)
     {
-        date_default_timezone_set("Asia/Bangkok");
         $datenow = date('Y-m-d H:i:s');
 
         $product_pay = Product::create([
-            'product_name' => $req->name,
+            'code_product' => $req->code_product,
+            'product_name' => $req->product_name,
             'category_id' => $req->category,
             'price' => $req->price,
-            'desc' => $req->desc,
-            'created_at' => $datenow,
-            'created_by' => Auth::user()->id
+            'stock' => $req->stock,
+            'capacity' => $req->capacity,
+            'weight_total' => $req->weight_total,
+            'height' => $req->height,
+            'width' => $req->width,
+            'radius' => $req->radius,
+            'rating' => $req->rating,
+            'created_at' => $datenow
         ]);
 
         $destination='Uploads/Product/';
@@ -61,12 +65,7 @@ class ProductControllers extends Controller
             Product::where('id', $product_pay->id)->update(['upload' => $name_file]);
         }
 
-        if(Auth::guard('admin')->check()){
-            return redirect()->route('admin.product.index')->with(['success' => 'Data successfully stored!']);
-        }else{
-            return redirect()->route('user.product.index')->with(['success' => 'Data successfully stored!']);
-        }
-
+        return redirect()->route('admin.product.index')->with(['success' => 'Data successfully stored!']);
 
     }
 
@@ -97,13 +96,21 @@ class ProductControllers extends Controller
     {
         date_default_timezone_set("Asia/Bangkok");
         $datenow = date('Y-m-d H:i:s');
-        $product_pay = Product::where('id', $req->id)->update([
-            'product_name' => $req->name,
+
+        $product_pay = Product::where('id', $req->id)
+        ->update([
+            'code_product' => $req->code_product,
+            'product_name' => $req->product_name,
             'category_id' => $req->category,
             'price' => $req->price,
-            'desc' => $req->desc,
-            'updated_at' => $datenow,
-            'updated_by' => Auth::user()->id
+            'stock' => $req->stock,
+            'capacity' => $req->capacity,
+            'weight_total' => $req->weight_total,
+            'height' => $req->height,
+            'width' => $req->width,
+            'radius' => $req->radius,
+            'rating' => $req->rating,
+            'updated_at' => $datenow
         ]);
 
         $destination='Uploads/Product/';
@@ -111,14 +118,10 @@ class ProductControllers extends Controller
             $file = $req->file('uploads');
             $name_file = time().'_'.$req->file('uploads')->getClientOriginalName();
             Storage::disk('Uploads')->putFileAs($destination,$file,$name_file);
-            Product::where('id', $req->id)->update(['upload' => $name_file]);
-          }
-
-        if(Auth::guard('admin')->check()){
-            return redirect()->route('admin.product.index')->with(['success' => 'Data successfully updated!']);
-        }else{
-            return redirect()->route('user.product.index')->with(['success' => 'Data successfully updated!']);
+            Product::where('id', $product_pay->id)->update(['upload' => $name_file]);
         }
+
+        return redirect()->route('admin.product.index')->with(['success' => 'Data successfully updated!']);
     }
 
     // Delete Data Function
@@ -128,8 +131,7 @@ class ProductControllers extends Controller
         $datenow = date('Y-m-d H:i:s');
         $exec = Product::where('id', $req->id )->update([
             'deleted_at'=>$datenow,
-            'updated_at'=>$datenow,
-            'updated_by'=>Auth::user()->id
+            'updated_at'=>$datenow
         ]);
 
         if ($exec) {
