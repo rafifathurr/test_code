@@ -121,7 +121,6 @@
                                                                     control-id="ControlID-17">
                                                                     <i class="fa fa-trash" style="color:red;"></i>
                                                                 </button>
-                                                                @endif
                                                             </div>
                                                         </center>
                                                     </td>
@@ -147,6 +146,8 @@
                 
                 {{-- USER SECTION --}}
                 <div class="page-inner mt--5">
+                    <br>
+                    <br>
 
                     <!-- Table -->
                     <div class="table-responsive">
@@ -213,14 +214,12 @@
                                                     <td>
                                                         <center>
                                                             <div class="form-button-action">
-                                                                <a href=""
-                                                                    data-toggle="tooltip" title="Detail"
+                                                                <a href="{{ route('user.product.create-order', $prod->id) }}"
+                                                                    data-toggle="tooltip" title="Pesan Barang"
                                                                     class="btn btn-link btn-icon btn-lg"
-                                                                    data-original-title="Pesan Barang"
                                                                     control-id="ControlID-16">
                                                                     <i class="fa fa-shopping-cart"></i>
                                                                 </a>
-                                                                @endif
                                                             </div>
                                                         </center>
                                                     </td>

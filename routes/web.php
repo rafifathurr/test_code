@@ -18,10 +18,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     if(Auth::guard('admin')->check()){
-    	return redirect()->route('admin.dashboard.index');
+    	return redirect()->route('admin.product.index');
     } else {
         if(Auth::guard('user')->check()){
-            return redirect()->route('user.order.index');
+            return redirect()->route('user.checkout.index');
         } else {
             return redirect()->route('login.index');
         }
@@ -50,21 +50,7 @@ Route::namespace('App\Http\Controllers')->group(function (){
         Route::namespace('dashboard')->name('dashboard.')->group(function () {
             Route::get('/dashboard-admin', 'DashboardControllers@index')->name('index');
         });
-
-        // ROUTE TO ORDER CONTROLLERS
-        Route::namespace('order')->prefix('order')->name('order.')->group(function () {
-            Route::get('/', 'OrderControllers@index')->name('index');
-            Route::get('create', 'OrderControllers@create')->name('create');
-            Route::post('store', 'OrderControllers@store')->name('store');
-            Route::get('getDetailProds', 'OrderControllers@getDetailProds')->name('getDetailProds');
-            Route::get('detail/{id}', 'OrderControllers@detail')->name('detail');
-            Route::get('edit/{id}', 'OrderControllers@edit')->name('edit');
-            Route::post('update', 'OrderControllers@update')->name('update');
-            Route::post('delete', 'OrderControllers@delete')->name('delete');
-            Route::post('getMonth', 'OrderControllers@getMonth')->name('getMonth');
-            Route::post('export', 'OrderControllers@export')->name('export');
-        });
-
+        
         // ROUTE TO PRODUCTS CONTROLLERS
         Route::namespace('product')->prefix('product')->name('product.')->group(function () {
             Route::get('/', 'ProductControllers@index')->name('index');
@@ -113,27 +99,17 @@ Route::namespace('App\Http\Controllers')->group(function (){
 
     Route::middleware('auth:user')->prefix('user')->name('user.')->group(function () {
 
-        // ROUTE TO ORDER CONTROLLERS
-        Route::namespace('order')->prefix('order')->name('order.')->group(function () {
-            Route::get('/', 'OrderControllers@index')->name('index');
-            Route::get('create', 'OrderControllers@create')->name('create');
-            Route::post('store', 'OrderControllers@store')->name('store');
-            Route::get('getDetailProds', 'OrderControllers@getDetailProds')->name('getDetailProds');
-            Route::get('detail/{id}', 'OrderControllers@detail')->name('detail');
-            Route::get('edit/{id}', 'OrderControllers@edit')->name('edit');
-            Route::post('update', 'OrderControllers@update')->name('update');
-            Route::post('delete', 'OrderControllers@delete')->name('delete');
-        });
-
         // ROUTE TO PRODUCT CONTROLLERS
         Route::namespace('product')->prefix('product')->name('product.')->group(function () {
             Route::get('/', 'ProductControllers@index')->name('index');
-            Route::get('create', 'ProductControllers@create')->name('create');
-            Route::post('store', 'ProductControllers@store')->name('store');
-            Route::get('detail/{id}', 'ProductControllers@detail')->name('detail');
-            Route::get('edit/{id}', 'ProductControllers@edit')->name('edit');
-            Route::post('update', 'ProductControllers@update')->name('update');
-            Route::post('delete', 'ProductControllers@delete')->name('delete');
+            Route::get('create-order/{id}', 'ProductControllers@create_order')->name('create-order');
+            Route::post('checkout', 'ProductControllers@checkout')->name('checkout');
+        });
+
+        // ROUTE TO PRODUCT CONTROLLERS
+        Route::namespace('product')->prefix('checkout')->name('checkout.')->group(function () {
+            Route::get('/', 'ProductControllers@checkout_index')->name('index');
+            Route::post('delete', 'ProductControllers@checkout_delete')->name('delete');
         });
     });
 });

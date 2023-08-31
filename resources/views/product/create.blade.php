@@ -234,7 +234,7 @@
                             $('#img')
                                 .attr('src', e.target.result)
                                 .width(500)
-                                .height(200);
+                                .height(500);
                         };
 
                         reader.readAsDataURL(input.files[0]);

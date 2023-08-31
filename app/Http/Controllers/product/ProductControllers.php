@@ -4,10 +4,12 @@ namespace App\Http\Controllers\product;
 
 use App\Http\Controllers\Controller;
 use App\Models\product\Product;
+use App\Models\order\Order;
 use App\Models\category\Category;
 use Illuminate\Support\Facades\Storage;
 
 use Illuminate\Http\Request;
+use Auth;
 use Session;
 
 class ProductControllers extends Controller
@@ -27,6 +29,25 @@ class ProductControllers extends Controller
         ]);
     }
 
+    // Checkout Index
+    public function checkout_index()
+    {
+        $id_user = Auth::user()->id;
+        $check = Order::selectRaw('SUM(total_price) as total')->whereNull('deleted_at')->where('status', 0)->where('created_by', $id_user)->groupBy('invoice')->first();
+
+        if($check == null){
+            $total = 0;
+        }else{
+            $total = $check->total;
+        }
+        $id_user = Auth::user()->id;
+        return view('checkout.index', [
+            "title" => "List Checkout",
+            "checkouts" => Order::with('product')->whereNull('deleted_at')->where('status', 0)->where('created_by', $id_user)->get(),
+            "total_price" => $total
+        ]);
+    }
+
     // Create View Data
     public function create()
     {
@@ -35,6 +56,97 @@ class ProductControllers extends Controller
         $data['disabled_'] = '';
         $data['categories'] = Category::orderBy('category', 'asc')->get();
         return view('product.create', $data);
+    }
+
+    // Create Order View Data
+    public function create_order($id)
+    {
+        $products = Product::with('category')->where('id', $id)->first();
+        $data['title'] = "Order Product $products->product_name";
+        $data['disabled_'] = '';
+        $data['products'] = $products;
+        $data['url'] = 'checkout';
+        return view('product.create_order', $data);
+    }
+
+    // Store Checkput View Data
+    public function checkout(Request $req)
+    {
+        $id_user = Auth::user()->id;
+        $datenow = date('Y-m-d H:i:s');
+        $date = date('Y-m-d');
+
+        $check_last_checkout = Order::where('created_by', $id_user)->where('status', 0)->first();
+        $check_last_product = Order::where('created_by', $id_user)->where('status', 0)->where('product_id', $req->id)->first();
+
+        if(is_null($check_last_checkout)){
+            $invoice = mt_rand();
+            $store = Order::create([
+                'invoice' => $invoice,
+                'date' => $date,
+                'product_id' => $req->id,
+                'qty' => $req->qty,
+                'price' => $req->price_data,
+                'total_price' => $req->price,
+                'status' => 0,
+                'created_by' => $id_user
+            ]);
+        }else{
+            $invoice = $check_last_checkout->invoice;
+
+            if(is_null($check_last_product)){
+                $store = Order::create([
+                    'invoice' => $invoice,
+                    'date' => $date,
+                    'product_id' => $req->id,
+                    'qty' => $req->qty,
+                    'price' => $req->price_data,
+                    'total_price' => $req->price,
+                    'status' => 0,
+                    'created_by' => $id_user
+                ]);
+            }else{
+                $qty_old = $check_last_product->qty;
+                $total_price_old = $check_last_product->total_price;
+                $qty_new = $req->qty;
+                $total_price_new = $req->price;
+
+                $cal_qty = $qty_old + $qty_new;
+                $cal_price = $total_price_old + $total_price_new;
+                $store = Order::where('invoice', $invoice)
+                ->where('product_id', $req->id)
+                ->update([
+                    'date' => $date,
+                    'qty' => $cal_qty,
+                    'total_price' => $cal_price,
+                    'status' => 0,
+                    'created_by' => $id_user,
+                    'updated_by' => $id_user
+                ]);
+            }
+        }
+
+        if($store){
+            return redirect()->route('user.checkout.index')->with(['success' => 'Checkout Successfully!']);
+        }else{
+            return redirect()->back()->with(with(['gagal' => 'Failed Checkout!']));
+        }
+    }
+
+    // Delete Data Function
+    public function checkout_delete(Request $req)
+    {
+        $datenow = date('Y-m-d H:i:s');
+        $exec = Order::where('id', $req->id )->update([
+            'deleted_at'=>$datenow,
+            'updated_at'=>$datenow
+        ]);
+
+        if ($exec) {
+            Session::flash('success', 'Data successfully deleted!');
+          } else {
+            Session::flash('gagal', 'Error Data');
+          }
     }
 
     // Store Function to Database

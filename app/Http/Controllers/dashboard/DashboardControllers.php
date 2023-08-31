@@ -23,13 +23,7 @@ class DashboardControllers extends Controller
     // Index View and Scope Data
     public function index()
     {
-        $yearz = date('Y');
-        $monthz = date('m');
-
-        $month = range(1,12);
-
-        // RETURN DATA
-        $data['title'] = "Dashboard";
+        $data['title'] = "WELCOME ADMIN";
 
         // RETURN VIEW
         return view('dashboard', $data);

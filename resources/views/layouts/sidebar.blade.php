@@ -47,17 +47,10 @@
             </div>
             <ul class="nav nav-primary">
                 @if (Auth::guard('admin')->check())
-                    <li class="nav-item {{ $title === 'Dashboard' ? 'active' : '' }}">
+                    <li class="nav-item {{ $title === 'WELCOME ADMIN' ? 'active' : '' }}">
                         <a href="{{ route('admin.dashboard.index') }}" aria-expanded="false">
                             <i class="fas fa-home"></i>
                             <p>Home</p>
-                        </a>
-                    </li>
-                    <li
-                        class="nav-item {{ $title === 'List Order' || $title === 'Add Order' || $title === 'Edit Order' || $title === 'Detail Order' ? 'active' : '' }}">
-                        <a href="{{ route('admin.order.index') }}" aria-expanded="false">
-                            <i class="fas fa-clipboard-list"></i>
-                            <p>Order</p>
                         </a>
                     </li>
                     <li
@@ -89,10 +82,10 @@
                     </li>
                 @else
                     <li
-                        class="nav-item {{ $title === 'List Order' || $title === 'Add Order' || $title === 'Edit Order' || $title === 'Detail Order' ? 'active' : '' }}">
-                        <a href="{{ route('user.order.index') }}" aria-expanded="false">
-                            <i class="fas fa-clipboard-list"></i>
-                            <p>Order</p>
+                        class="nav-item {{ $title === 'List Checkout' ? 'active' : ''}}">
+                        <a href="{{ route('user.checkout.index') }}" aria-expanded="false">
+                            <i class="fa fa-shopping-cart"></i>
+                            <p>Checkout</p>
                         </a>
                     </li>
                     <li
