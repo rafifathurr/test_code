@@ -76,8 +76,8 @@ class ProductControllers extends Controller
         $datenow = date('Y-m-d H:i:s');
         $date = date('Y-m-d');
 
-        $check_last_checkout = Order::where('created_by', $id_user)->where('status', 0)->first();
-        $check_last_product = Order::where('created_by', $id_user)->where('status', 0)->where('product_id', $req->id)->first();
+        $check_last_checkout = Order::where('created_by', $id_user)->whereNull('deleted_at')->where('status', 0)->first();
+        $check_last_product = Order::where('created_by', $id_user)->whereNull('deleted_at')->where('status', 0)->where('product_id', $req->id)->first();
 
         if(is_null($check_last_checkout)){
             $invoice = mt_rand();
