@@ -12,3 +12,7 @@ How to Use :
 - Import File SQL to Database with name <b> Servvo </b> 
 - Run command <b>php artisan key:generate</b> to generate key
 - Run Application with <b>php artisan serve</b> or with <b>APACHE OR NGINX</b>
+
+Account :
+- Username : <b> admin@gmail.com</b>
+- Password : <b> admin123</b>
